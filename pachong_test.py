@@ -2,11 +2,27 @@
 import re
 import urllib.request
 import urllib
+import http.cookiejar
+#head: dict of header
+def makeMyOpener(head = {
+    'Connection':'Keep-Alive',
+    'Accept':'test/html,application/xhtml+xml,*/*',
+    'Accept-Language': 'en-US,en;q=0.8,zh-Hans-CN;q=0.5,zh-Hans;q=0.3'
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko' }):
+
+    cj=http.cookiejar.Cookiejar()
+    opener=urllib.request.build_opener(urllib,request.HTTPCookieProsessor(cj))
+    header=[]
+    for key,value in head.items():
+        elem = (key,value)
+        header.append(elem)
+    opener.addheaders=header
+    return opener
 
 from collections import deque
 
 queue=deque()
-visited=set()
+visited=set()   #set结构：无序无重复元素
 
 url='http://news.dbanote.net' #set begin web
 
@@ -19,7 +35,7 @@ while queue:
 
     print('already fetch '+str(cnt)+' fetching on<---'+url)
     cnt+=1
-    urlop=urllib.request.urlopen(url)
+    urlop=urllib.request.urlopen(url,timeout=2)#超时跳过+爬网页
     if 'html' not in urlop.getheader('Content-Type'):
         continue
 
