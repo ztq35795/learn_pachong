@@ -20,23 +20,15 @@ cnt=0
 
 while queue:
     url=queue.popleft()#queue head out
-    visited |={url}
 
-    print('already fetch '+str(cnt)+' fetching on<---'+url)
-    cnt+=1
     urlop=urllib.request.urlopen(url,timeout=1000)#超时跳过+爬下网页源码
-    if 'html' not in urlop.getheader('Content-Type'):#判断打开的是不是网页，也可能是图片什么的
-        continue
-
     try:
         data = urlop.read().decode('UTF-8')#用UTF-8读网页
     except:#不能则跳过
         continue
-    linkre =re.compile('href=\"(.+?)\"')#创建一个正则表达式对象
-    for x in linkre.findall(data):#从爬的网页读所有符合的网址
-        if 'http' in x and x not in visited:
-            queue.append(x)
-            print('adding to the queue --->' + x)
 
-    if 'html' not in urlop.getheader('Content-Type'):
-        continue
+#    linkre =re.compile(r'<span class="briefcitTitle">\n<a href=.*?">(.*?) / (.*?)</a>\n</span>\n<br />\n<span class="briefcitDetail">\n(.*?)\n<br />\n<span class="briefcitDetail">\n(.*?)<br />\n<br />\n<span class="briefcitDetail">\n(.*?)<br />',re.DOTALL).findall(data)
+#    print(linkre)
+
+    NEST_URL=re.compile(r'<a href="(.*)+?">后一页',re.DOTALL).findall(data)
+    print(NEST_URL)
