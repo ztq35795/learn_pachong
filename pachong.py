@@ -26,9 +26,10 @@ while queue:
         data = urlop.read().decode('UTF-8')#用UTF-8读网页
     except:#不能则跳过
         continue
+    linkre =re.compile(r'<span class="briefcitTitle">\n<a href=.*?">(.*?)</a>\n</span>\n<br />\n<span class="briefcitDetail">\n(.*?)\n<br />\n<span class="briefcitDetail">\n(.*?)<br />\n<br />\n<span class="briefcitDetail">\n(.*?)<br />',re.DOTALL).findall(data)
+    print(linkre)
 
-#    linkre =re.compile(r'<span class="briefcitTitle">\n<a href=.*?">(.*?) / (.*?)</a>\n</span>\n<br />\n<span class="briefcitDetail">\n(.*?)\n<br />\n<span class="briefcitDetail">\n(.*?)<br />\n<br />\n<span class="briefcitDetail">\n(.*?)<br />',re.DOTALL).findall(data)
-#    print(linkre)
-
-    NEST_URL=re.compile(r'<a href="(.*)+?">后一页',re.DOTALL).findall(data)
-    print(NEST_URL)
+    NEST_FETCH=re.compile('<a href="(/search\*chx\?/X.*?/browse)">后一页<',re.DOTALL).search(data)
+    NEST_URL=re.findall('"(.*?)"',NEST_FETCH.group())
+    queue.append(NEST_URL)
+#    print(NEST_URL)
